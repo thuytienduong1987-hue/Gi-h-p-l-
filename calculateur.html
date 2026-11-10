@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calculateur de prix juste</title>
+<style>
+body{font-family:Arial,sans-serif;max-width:480px;margin:0 auto;padding:16px;background:#f7f7f9;color:#222}
+h1{font-size:22px}
+label{display:block;margin-top:12px;font-weight:bold;font-size:14px}
+input{width:100%;padding:10px;font-size:16px;box-sizing:border-box;margin-top:4px}
+button{margin-top:16px;width:100%;padding:12px;font-size:16px;background:#2563eb;color:#fff;border:0;border-radius:6px}
+#res{display:none;margin-top:20px;background:#fff;padding:14px;border-radius:8px}
+.big{font-size:20px;font-weight:bold}
+.loss{color:#b91c1c;font-weight:bold}
+textarea{width:100%;height:150px;font-size:14px;box-sizing:border-box}
+</style>
+</head>
+<body>
+<h1>Combien perdez-vous en facturant trop peu ?</h1>
+
+<label>Revenu net annuel souhaité (€)</label>
+<input id="revenu" type="number" inputmode="decimal" placeholder="30000">
+
+<label>Charges annuelles (€)</label>
+<input id="charges" type="number" inputmode="decimal" placeholder="8000">
+
+<label>Jours facturables par an</label>
+<input id="jours" type="number" inputmode="decimal" placeholder="180">
+
+<label>Votre tarif journalier actuel (€)</label>
+<input id="actuel" type="number" inputmode="decimal" placeholder="200">
+
+<button onclick="calculer()">Calculer mon prix juste</button>
+
+<div id="res">
+  <p>Tarif minimum : <span id="min" class="big"></span></p>
+  <p>Tarif conseillé : <span id="sug" class="big"></span></p>
+  <p id="perte"></p>
+  <label>Message prêt à envoyer à vos clients</label>
+  <textarea id="msg" readonly></textarea>
+</div>
+
+<script>
+function calculer(){
+  var r=parseFloat(document.getElementById('revenu').value);
+  var c=parseFloat(document.getElementById('charges').value);
+  var j=parseFloat(document.getElementById('jours').value);
+  var a=parseFloat(document.getElementById('actuel').value);
+  if(!(r>=0)||!(c>=0)||!(j>0)||!(a>=0)){alert('Merci de remplir tous les champs.');return;}
+  var min=(r+c)/j;
+  var sug=Math.ceil(min*1.15);
+  min=Math.ceil(min);
+  document.getElementById('min').textContent=min+' €/jour';
+  document.getElementById('sug').textContent=sug+' €/jour';
+  var diff=(sug-a)*j;
+  var p=document.getElementById('perte');
+  if(diff>0){
+    p.innerHTML='Vous perdez environ <span class="loss">'+Math.round(diff).toLocaleString('fr-FR')+' € par an</span> avec votre tarif actuel.';
+    document.getElementById('msg').value='Bonjour,\n\nÀ compter du prochain mois, mon tarif journalier passera de '+a+' € à '+sug+' €. Cet ajustement me permet de continuer à vous offrir un service de qualité.\n\nJe reste à votre disposition pour en discuter.\n\nCordialement';
+  }else{
+    p.textContent='Bonne nouvelle : votre tarif actuel couvre déjà le tarif conseillé.';
+    document.getElementById('msg').value='';
+  }
+  document.getElementById('res').style.display='block';
+}
+</script>
+</body>
+</html>
