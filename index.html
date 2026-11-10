@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prix juste — combien perdez-vous en facturant trop bas ?</title>
+<meta name="description" content="Trois questions, une réponse chiffrée en euros : votre prix minimum et ce que vous perdez chaque année.">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,sans-serif;background:#fffaf0;color:#1a1a1a;padding:24px;max-width:520px;margin:auto}
+h1{font-size:30px;line-height:1.2}
+h2{font-size:24px;line-height:1.25}
+p{font-size:17px;line-height:1.5}
+label{display:block;font-weight:600;margin:18px 0 6px}
+input{width:100%;font-size:18px;padding:14px;border:2px solid #1a1a1a;border-radius:12px;background:#fff}
+button{display:block;width:100%;margin-top:22px;background:#1a1a1a;color:#fff;border:0;padding:16px;border-radius:12px;font-size:18px}
+.bar{height:6px;background:#e8dfc9;border-radius:3px;margin-bottom:24px}
+.bar div{height:6px;background:#c2410c;border-radius:3px;width:0}
+.big{font-size:44px;font-weight:800;color:#c2410c;margin:8px 0}
+.row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #e8dfc9;font-size:17px}
+.lock{margin-top:22px;padding:18px;border:2px dashed #1a1a1a;border-radius:12px;background:#f5ecd6}
+small{color:#555;display:block;margin-top:16px;line-height:1.4}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+
+<section class="s" id="s0">
+<h1>Combien perdez-vous chaque année en facturant trop bas ?</h1>
+<p>Trois questions, une réponse chiffrée en euros.</p>
+<button onclick="go(1)">Commencer — c’est gratuit</button>
+</section>
+
+<div id="barwrap" hidden><div class="bar"><div id="bar"></div></div></div>
+
+<section class="s" id="s1" hidden>
+<h2>1 sur 3 — Votre objectif</h2>
+<label for="net">Revenu net souhaité par mois (€)</label>
+<input id="net" type="number" inputmode="decimal" placeholder="ex. 2500">
+<label for="chg">Charges professionnelles par mois (€)</label>
+<input id="chg" type="number" inputmode="decimal" placeholder="ex. 300">
+<button onclick="nxt(1)">Suivant</button>
+</section>
+
+<section class="s" id="s2" hidden>
+<h2>2 sur 3 — Votre activité réelle</h2>
+<label for="days">Jours réellement facturés par mois (en moyenne)</label>
+<input id="days" type="number" inputmode="decimal" placeholder="ex. 14">
+<p><small>Comptez les jours payés, pas les jours travaillés : devis, administratif et prospection ne sont pas facturés.</small></p>
+<button onclick="nxt(2)">Suivant</button>
+</section>
+
+<section class="s" id="s3" hidden>
+<h2>3 sur 3 — Votre tarif actuel</h2>
+<label for="rate">Tarif par jour que vous facturez aujourd’hui (€)</label>
+<input id="rate" type="number" inputmode="decimal" placeholder="ex. 220">
+<button onclick="nxt(3)">Voir mon résultat</button>
+</section>
+
+<section class="s" id="s4" hidden>
+<p id="lead"></p>
+<div class="big" id="loss"></div>
+<div class="row"><span>Prix minimum conseillé</span><b id="min"></b></div>
+<div class="row"><span>Prix conseillé (avec marge)</span><b id="sug"></b></div>
+<div class="row"><span>Votre tarif actuel</span><b id="cur"></b></div>
+<div class="lock">
+<b>Votre message prêt à envoyer pour annoncer la hausse de prix</b>
+<p>Bientôt disponible.</p>
+</div>
+<small>Hypothèses : cotisations sociales d’environ 22 % (micro-entrepreneur, prestations de services), marge de sécurité de 10 %. Estimation indicative, pas un conseil comptable.</small>
+<button onclick="go(1)">Refaire le calcul</button>
+</section>
+
+<script>
+function $(i){return document.getElementById(i)}
+function v(i){return parseFloat(($(i).value||"").replace(",","."))}
+function go(n){
+  document.querySelectorAll(".s").forEach(function(e,i){e.hidden=(i!==n)});
+  $("barwrap").hidden=(n<1||n>3);
+  $("bar").style.width=(n*33.3)+"%";
+  window.scrollTo(0,0);
+}
+function nxt(n){
+  if(n===1&&!(v("net")>0&&v("chg")>=0)){alert("Merci de remplir les deux champs.");return}
+  if(n===2&&!(v("days")>0&&v("days")<=23)){alert("Entrez un nombre de jours entre 1 et 23.");return}
+  if(n===3&&!(v("rate")>0)){alert("Entrez votre tarif par jour.");return}
+  if(n===3){result();return}
+  go(n+1);
+}
+function eur(x){return Math.round(x).toLocaleString("fr-FR")+" €"}
+function result(){
+  var net=v("net"),chg=v("chg")||0,days=v("days"),rate=v("rate");
+  var need=(net+chg)/0.78;
+  var min=need/days;
+  var sug=Math.ceil(min*1.1/5)*5;
+  var gap=min-rate;
+  $("min").textContent=eur(min)+" / jour";
+  $("sug").textContent=eur(sug)+" / jour";
+  $("cur").textContent=eur(rate)+" / jour";
+  if(gap>0){
+    $("lead").textContent="Avec votre tarif actuel, vous perdez environ :";
+    $("loss").textContent=eur(gap*days*12)+" par an";
+  }else{
+    $("lead").textContent="Bonne nouvelle : votre tarif couvre votre objectif. Marge annuelle :";
+    $("loss").textContent=eur(-gap*days*12)+" par an";
+  }
+  go(4);
+}
+</script>
+</body>
+</html>
