@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Merci — Prix juste</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,sans-serif;background:#faf6ee;color:#222;padding:20px;max-width:560px;margin:auto}
+h1{font-size:28px;line-height:1.2}
+p{font-size:17px;line-height:1.5}
+label{display:block;font-weight:600;margin:16px 0 6px}
+input,select,textarea{width:100%;font-size:18px;padding:12px;border:2px solid #e8dfc9;border-radius:10px;background:#fff}
+textarea{min-height:260px;font-size:16px}
+button{display:block;width:100%;margin-top:20px;font-size:18px;font-weight:700;padding:14px;border:0;border-radius:10px;background:#c2410c;color:#fff}
+.ok{color:#15803d;font-weight:600;margin-top:8px}
+</style>
+</head>
+<body>
+<h1>Merci pour votre achat !</h1>
+<p>Voici votre générateur de message d’augmentation de tarif. Remplissez les champs, puis copiez le message.</p>
+
+<label>Prénom du client</label>
+<input id="client" placeholder="Ex. Madame Martin">
+
+<label>Ancien tarif (€)</label>
+<input id="ancien" type="number" inputmode="decimal" placeholder="Ex. 40">
+
+<label>Nouveau tarif (€)</label>
+<input id="nouveau" type="number" inputmode="decimal" placeholder="Ex. 48">
+
+<label>Unité</label>
+<select id="unite">
+<option>de l’heure</option>
+<option>par jour</option>
+<option>par prestation</option>
+</select>
+
+<label>Date d’entrée en vigueur</label>
+<input id="date" type="date">
+
+<label>Votre prénom et nom</label>
+<input id="moi" placeholder="Ex. Jean Dupont">
+
+<button onclick="gen()">Créer mon message</button>
+
+<label>Votre message</label>
+<textarea id="msg" readonly></textarea>
+<button onclick="copier()">Copier le message</button>
+<div class="ok" id="ok"></div>
+
+<script>
+function gen(){
+  var c=document.getElementById("client").value||"";
+  var a=document.getElementById("ancien").value;
+  var n=document.getElementById("nouveau").value;
+  var u=document.getElementById("unite").value;
+  var d=document.getElementById("date").value;
+  var m=document.getElementById("moi").value;
+  var dd=d?d.split("-").reverse().join("/"):"[date]";
+  var t="Bonjour "+c+",\n\n"+
+  "Je vous remercie sinc\u00e8rement pour votre confiance.\n\n"+
+"Afin de continuer \u00e0 vous offrir un travail de qualit\u00e9, j\u2019ajuste mes tarifs \u00e0 partir du "+dd+". Mon tarif passera de "+a+" \u20ac \u00e0 "+n+" \u20ac "+u+".\n\n"+
+"Ce changement s\u2019applique \u00e0 toutes les prestations r\u00e9alis\u00e9es \u00e0 partir de cette date. Je reste \u00e0 votre disposition pour en discuter.\n\n"+
+"Cordialement,\n"+m;
+  document.getElementById("msg").value=t;
+  document.getElementById("ok").textContent="";
+}
+function copier(){
+  var t=document.getElementById("msg");
+  t.select();
+  try{document.execCommand("copy");document.getElementById("ok").textContent="Message copi\u00e9";}catch(e){}
+}
+</script>
+</body>
+</html>
